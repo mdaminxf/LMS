@@ -11,21 +11,15 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle
+  CardTitle,
 } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Eye, EyeOff, Mail, Lock, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
   const { login } = useAuth();
-  const router = useRouter();
-
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -36,10 +30,7 @@ export default function LoginPage() {
     setError('');
 
     const success = await login(formData.email, formData.password);
-
-    if (success) {
-      router.push('/dashboard'); // redirect to dashboard
-    } else {
+    if (!success) {
       setError(
         'Invalid credentials. Try demo accounts: student@demo.com, faculty@demo.com, admin@demo.com (password: demo123)'
       );
@@ -54,8 +45,8 @@ export default function LoginPage() {
     setError('');
 
     const success = await login(email, 'demo123');
-    if (success) {
-      router.push('/dashboard'); // redirect to dashboard
+    if (!success) {
+      setError('Demo login failed. Please try again.');
     }
 
     setLoading(false);
@@ -64,7 +55,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Logo / Header */}
+        {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4">
             <span className="text-2xl font-bold text-white">S</span>
@@ -130,7 +121,10 @@ export default function LoginPage() {
 
               <div className="flex items-center justify-between">
                 <div className="text-sm">
-                  <Link href="/forgot-password" className="text-blue-600 hover:text-blue-500 hover:underline">
+                  <Link
+                    href="/forgot-password"
+                    className="text-blue-600 hover:text-blue-500 hover:underline"
+                  >
                     Forgot Password?
                   </Link>
                 </div>
@@ -153,20 +147,41 @@ export default function LoginPage() {
               </div>
 
               <div className="grid grid-cols-3 gap-2 w-full">
-                <Button type="button" variant="outline" size="sm" onClick={() => handleDemoLogin('student@demo.com')} disabled={loading}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDemoLogin('student@demo.com')}
+                  disabled={loading}
+                >
                   Student
                 </Button>
-                <Button type="button" variant="outline" size="sm" onClick={() => handleDemoLogin('faculty@demo.com')} disabled={loading}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDemoLogin('faculty@demo.com')}
+                  disabled={loading}
+                >
                   Faculty
                 </Button>
-                <Button type="button" variant="outline" size="sm" onClick={() => handleDemoLogin('admin@demo.com')} disabled={loading}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDemoLogin('admin@demo.com')}
+                  disabled={loading}
+                >
                   Admin
                 </Button>
               </div>
 
               <div className="text-center text-sm">
                 Don&apos;t have an account?{' '}
-                <Link href="/register" className="text-blue-600 hover:text-blue-500 hover:underline font-medium">
+                <Link
+                  href="/register"
+                  className="text-blue-600 hover:text-blue-500 hover:underline font-medium"
+                >
                   Sign up
                 </Link>
               </div>
