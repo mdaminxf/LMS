@@ -6,13 +6,28 @@ import { AuthService } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
+    const contentType = request.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) {
+      return NextResponse.json(
+        { error: 'Expected application/json' },
+        { status: 400 }
+      );
+    }
+
     const body = await request.json();
+
     const email = (body.email || '').trim().toLowerCase();
     const password = (body.password || '').trim();
 
-    // Find user in mock data
+    if (!email || !password) {
+      return NextResponse.json(
+        { error: 'Email and password are required' },
+        { status: 400 }
+      );
+    }
+
     const user = mockUsers.find(
-      (u) => u.email.toLowerCase() === email && u.password === password
+      (u) => u.email.trim().toLowerCase() === email && u.password === password
     );
 
     if (!user) {
@@ -22,10 +37,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate dummy JWT token
     const token = AuthService.generateDummyToken(user);
 
-    // Trim sensitive data
     const authState = {
       user: {
         id: user.id,

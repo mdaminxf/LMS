@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useAuth } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,12 +9,36 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Eye, EyeOff, Mail, Lock, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  password: string;
+  role: 'student' | 'faculty' | 'admin';
+  avatar: string;
+}
+
+// Mock users
+const mockUsers: User[] = [
+  { id: 1, name: 'Demo Student', email: 'student@demo.com', password: 'demo123', role: 'student', avatar: '/avatars/student.png' },
+  { id: 2, name: 'Demo Faculty', email: 'faculty@demo.com', password: 'demo123', role: 'faculty', avatar: '/avatars/faculty.png' },
+  { id: 3, name: 'Demo Admin', email: 'admin@demo.com', password: 'demo123', role: 'admin', avatar: '/avatars/admin.png' },
+];
+
+// Simulated login function
+const login = async (email: string, password: string) => {
+  // simulate network delay
+  await new Promise((r) => setTimeout(r, 500));
+  const user = mockUsers.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
+  if (!user) return false;
+
+  // Save auth state in localStorage
+  localStorage.setItem('auth', JSON.stringify({ user, token: 'dummy-token', isAuthenticated: true }));
+  return true;
+};
+
 export default function LoginPage() {
-  const { login } = useAuth();
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -26,13 +49,13 @@ export default function LoginPage() {
     setError('');
 
     const success = await login(formData.email, formData.password);
-    
+
     if (success) {
       window.location.href = '/dashboard';
     } else {
       setError('Invalid credentials. Try demo accounts: student@demo.com, faculty@demo.com, admin@demo.com (password: demo123)');
     }
-    
+
     setLoading(false);
   };
 
@@ -40,18 +63,21 @@ export default function LoginPage() {
     setFormData({ email, password: 'demo123' });
     setLoading(true);
     setError('');
-    
+
     const success = await login(email, 'demo123');
     if (success) {
       window.location.href = '/dashboard';
+    } else {
+      setError('Demo login failed.');
     }
+
     setLoading(false);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Logo/Brand */}
+        {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4">
             <span className="text-2xl font-bold text-white">S</span>
@@ -63,9 +89,7 @@ export default function LoginPage() {
         <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
           <CardHeader className="pb-4">
             <CardTitle className="text-2xl font-semibold text-center">Sign In</CardTitle>
-            <CardDescription className="text-center">
-              Enter your credentials to access your account
-            </CardDescription>
+            <CardDescription className="text-center">Enter your credentials to access your account</CardDescription>
           </CardHeader>
 
           <form onSubmit={handleSubmit}>
@@ -77,7 +101,7 @@ export default function LoginPage() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email or Mobile</Label>
+                <Label htmlFor="email">Email</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
@@ -117,10 +141,7 @@ export default function LoginPage() {
 
               <div className="flex items-center justify-between">
                 <div className="text-sm">
-                  <Link 
-                    href="/forgot-password" 
-                    className="text-blue-600 hover:text-blue-500 hover:underline"
-                  >
+                  <Link href="/forgot-password" className="text-blue-600 hover:text-blue-500 hover:underline">
                     Forgot Password?
                   </Link>
                 </div>
@@ -128,11 +149,7 @@ export default function LoginPage() {
             </CardContent>
 
             <CardFooter className="flex flex-col space-y-4">
-              <Button 
-                type="submit" 
-                className="w-full bg-blue-600 hover:bg-blue-700" 
-                disabled={loading}
-              >
+              <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={loading}>
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Sign In
               </Button>
@@ -147,41 +164,14 @@ export default function LoginPage() {
               </div>
 
               <div className="grid grid-cols-3 gap-2 w-full">
-                <Button 
-                  type="button"
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => handleDemoLogin('student@demo.com')}
-                  disabled={loading}
-                >
-                  Student
-                </Button>
-                <Button 
-                  type="button"
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => handleDemoLogin('faculty@demo.com')}
-                  disabled={loading}
-                >
-                  Faculty
-                </Button>
-                <Button 
-                  type="button"
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => handleDemoLogin('admin@demo.com')}
-                  disabled={loading}
-                >
-                  Admin
-                </Button>
+                <Button type="button" variant="outline" size="sm" onClick={() => handleDemoLogin('student@demo.com')} disabled={loading}>Student</Button>
+                <Button type="button" variant="outline" size="sm" onClick={() => handleDemoLogin('faculty@demo.com')} disabled={loading}>Faculty</Button>
+                <Button type="button" variant="outline" size="sm" onClick={() => handleDemoLogin('admin@demo.com')} disabled={loading}>Admin</Button>
               </div>
 
               <div className="text-center text-sm">
                 Don&apos;t have an account?{' '}
-                <Link 
-                  href="/register" 
-                  className="text-blue-600 hover:text-blue-500 hover:underline font-medium"
-                >
+                <Link href="/register" className="text-blue-600 hover:text-blue-500 hover:underline font-medium">
                   Sign up
                 </Link>
               </div>
