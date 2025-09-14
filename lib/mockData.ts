@@ -7,7 +7,39 @@ export const departments = [
   'Chemical',
   'Electrical',
 ];
-
+export type User =
+  | {
+      id: string;
+      email: string;
+      password: string;
+      role: "student";
+      name: string;
+      rollNo: string;
+      department: string;
+      year: string;
+      degree: string;
+      avatar: string;
+      joinDate: string;
+    }
+  | {
+      id: string;
+      email: string;
+      password: string;
+      role: "faculty";
+      name: string;
+      department: string;
+      designation: string;
+      avatar: string;
+    }
+  | {
+      id: string;
+      email: string;
+      password: string;
+      role: "admin";
+      name: string;
+      designation: string;
+      avatar: string;
+    };
 export const degrees = ['B.Tech', 'M.Tech', 'B.Sc', 'M.Sc', 'MBA', 'PhD'];
 
 export const activityCategories = [
@@ -21,7 +53,7 @@ export const activityCategories = [
   'Workshop',
 ];
 
-export const mockUsers = [
+export const mockUsers: User[] = [
   {
     id: '1',
     email: 'student@demo.com',
