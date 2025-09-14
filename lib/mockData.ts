@@ -35,7 +35,7 @@ export const mockUsers = [
     avatar:
       'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400',
     joinDate: '2021-08-01',
-  } as const,
+  },
   {
     id: '2',
     email: 'faculty@demo.com',
@@ -46,7 +46,7 @@ export const mockUsers = [
     designation: 'Associate Professor',
     avatar:
       'https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg?auto=compress&cs=tinysrgb&w=400',
-  } as const,
+  },
   {
     id: '3',
     email: 'admin@demo.com',
@@ -56,7 +56,7 @@ export const mockUsers = [
     designation: 'System Administrator',
     avatar:
       'https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=400',
-  } as const,
+  },
 ];
 
 export const mockActivities = [
