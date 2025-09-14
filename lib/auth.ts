@@ -1,5 +1,7 @@
 'use client';
 
+import { useState, useEffect, useCallback } from 'react';
+
 export interface User {
   id: string;
   email: string;
@@ -48,8 +50,8 @@ export class AuthService {
       id: user.id,
       email: user.email,
       role: user.role,
-      name: user.name, // ✅ include
-      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24,
+      name: user.name,
+      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24, // 24h expiry
     };
     return btoa(JSON.stringify(payload));
   }
@@ -78,61 +80,67 @@ export class AuthService {
   }
 }
 
+// ---------- React Hook for Auth ----------
 export function useAuth() {
-  if (typeof window === 'undefined') {
-    return {
-      user: null,
-      token: null,
-      isAuthenticated: false,
-      login: async () => false,
-      logout: () => {},
-      register: async () => false,
-    };
-  }
+  const [auth, setAuth] = useState<AuthState>({
+    user: null,
+    token: null,
+    isAuthenticated: false,
+  });
 
-  const authState = AuthService.getAuth();
+  // Initialize auth state from localStorage
+  useEffect(() => {
+    const stored = AuthService.getAuth();
+    if (stored && stored.token && AuthService.validateToken(stored.token)) {
+      setAuth(stored);
+    } else {
+      AuthService.clearAuth();
+    }
+  }, []);
 
-  const login = async (email: string, password: string) => {
-    // Simulate API call to backend
-    const response = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    });
+  const login = useCallback(async (email: string, password: string) => {
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (response.ok) {
+      if (!response.ok) return false;
+
       const data = await response.json();
       AuthService.saveAuth(data);
-      window.location.reload(); // Refresh to update auth state
+      setAuth(data); // Update state to trigger re-render
       return true;
+    } catch (err) {
+      console.error('Login failed:', err);
+      return false;
     }
-    return false;
-  };
+  }, []);
 
-  const register = async (userData: any) => {
-    // Simulate API call to backend
-    const response = await fetch('/api/auth/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData),
-    });
-
-    return response.ok;
-  };
-
-  const logout = () => {
+  const logout = useCallback(() => {
     AuthService.clearAuth();
+    setAuth({ user: null, token: null, isAuthenticated: false });
     window.location.href = '/login';
-  };
+  }, []);
+
+  const register = useCallback(async (userData: any) => {
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+      });
+      return response.ok;
+    } catch {
+      return false;
+    }
+  }, []);
 
   return {
-    user: authState?.user || null,
-    token: authState?.token || null,
-    isAuthenticated: authState?.isAuthenticated || false,
+    user: auth.user,
+    token: auth.token,
+    isAuthenticated: auth.isAuthenticated,
     login,
     logout,
     register,
