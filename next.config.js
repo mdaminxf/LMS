@@ -1,10 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
+  // output: 'export', // REMOVE this line
   eslint: {
     ignoreDuringBuilds: true,
   },
   images: { unoptimized: true },
 };
 
-module.exports = nextConfig;
+export default nextConfig;
