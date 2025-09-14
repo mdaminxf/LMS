@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     );
 
     if (!user) {
-      return user;
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
     // Generate dummy token
