@@ -7,39 +7,43 @@ export const departments = [
   'Chemical',
   'Electrical',
 ];
-export type User =
-  | {
-      id: string;
-      email: string;
-      password: string;
-      role: "student";
-      name: string;
-      rollNo: string;
-      department: string;
-      year: string;
-      degree: string;
-      avatar: string;
-      joinDate: string;
-    }
-  | {
-      id: string;
-      email: string;
-      password: string;
-      role: "faculty";
-      name: string;
-      department: string;
-      designation: string;
-      avatar: string;
-    }
-  | {
-      id: string;
-      email: string;
-      password: string;
-      role: "admin";
-      name: string;
-      designation: string;
-      avatar: string;
-    };
+export type Student = {
+  id: string;
+  email: string;
+  password: string;
+  role: 'student';
+  name: string;
+  rollNo: string;
+  department: string;
+  year: string;
+  degree: string;
+  avatar: string;
+  joinDate: string;
+};
+
+export type Faculty = {
+  id: string;
+  email: string;
+  password: string;
+  role: 'faculty';
+  name: string;
+  department: string;
+  designation: string;
+  avatar: string;
+};
+
+export type Admin = {
+  id: string;
+  email: string;
+  password: string;
+  role: 'admin';
+  name: string;
+  designation: string;
+  avatar: string;
+};
+
+export type User = Student | Faculty | Admin;
+
 export const degrees = ['B.Tech', 'M.Tech', 'B.Sc', 'M.Sc', 'MBA', 'PhD'];
 
 export const activityCategories = [
@@ -64,8 +68,7 @@ export const mockUsers: User[] = [
     department: 'Computer Science',
     year: '3rd Year',
     degree: 'B.Tech',
-    avatar:
-      'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400',
+    avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400',
     joinDate: '2021-08-01',
   },
   {
@@ -76,8 +79,7 @@ export const mockUsers: User[] = [
     name: 'Dr. Sarah Wilson',
     department: 'Computer Science',
     designation: 'Associate Professor',
-    avatar:
-      'https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg?auto=compress&cs=tinysrgb&w=400',
+    avatar: 'https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg?auto=compress&cs=tinysrgb&w=400',
   },
   {
     id: '3',
@@ -86,8 +88,7 @@ export const mockUsers: User[] = [
     role: 'admin',
     name: 'John Administrator',
     designation: 'System Administrator',
-    avatar:
-      'https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=400',
+    avatar: 'https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=400',
   },
 ];
 
