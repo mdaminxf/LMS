@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 
 export interface User {
   id: string;
@@ -82,6 +83,8 @@ export class AuthService {
 
 // ---------- React Hook for Auth ----------
 export function useAuth() {
+  const router = useRouter();
+
   const [auth, setAuth] = useState<AuthState>({
     user: null,
     token: null,
@@ -111,18 +114,21 @@ export function useAuth() {
       const data = await response.json();
       AuthService.saveAuth(data);
       setAuth(data); // Update state to trigger re-render
+
+      // Navigate to dashboard after login
+      router.push('/dashboard');
       return true;
     } catch (err) {
       console.error('Login failed:', err);
       return false;
     }
-  }, []);
+  }, [router]);
 
   const logout = useCallback(() => {
     AuthService.clearAuth();
     setAuth({ user: null, token: null, isAuthenticated: false });
-    window.location.href = '/login';
-  }, []);
+    router.push('/login');
+  }, [router]);
 
   const register = useCallback(async (userData: any) => {
     try {
