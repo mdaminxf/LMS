@@ -11,8 +11,8 @@ const DashboardContent = dynamic(() => import('./DashboardContent'), {
 
 export default function DashboardPageWrapper() {
   return (
-    <ProtectedRoute children={undefined}>
-      <Layout children={undefined}>
+    <ProtectedRoute>
+      <Layout>
         <DashboardContent />
       </Layout>
     </ProtectedRoute>
